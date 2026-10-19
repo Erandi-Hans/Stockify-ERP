@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SupplierController;
 
 // Show login page directly as the welcome page (Root URL /)
 Route::get('/', [AuthController::class, 'showLoginForm']);
@@ -32,3 +34,9 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
 Route::get('/login', function () {
     return "Login Page goes here";
 })->name('login');
+
+// Categories & Suppliers Routes (Accessible by Admin and Inventory User)
+Route::middleware(['auth', 'role:Admin,Inventory'])->group(function () {
+    Route::resource('categories', CategoryController::class);
+    Route::resource('suppliers', SupplierController::class);
+});
