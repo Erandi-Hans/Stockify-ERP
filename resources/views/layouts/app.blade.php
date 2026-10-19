@@ -11,7 +11,6 @@
 
 <body class="bg-gray-100 font-sans antialiased">
     <div class="flex h-screen bg-gray-100">
-
         <!-- Sidebar Navigation -->
         <div class="w-64 bg-gray-900 text-white flex flex-col">
             <div class="p-5 text-2xl font-bold tracking-wider border-b border-gray-800">
@@ -21,8 +20,8 @@
                 <a href="#" class="block px-4 py-2.5 rounded bg-gray-800 text-white font-medium">Dashboard</a>
                 <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Customers</a>
                 <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Products</a>
-                <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Categories</a>
-                <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Suppliers</a>
+                <a href="{{ route('categories.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Categories</a>
+                <a href="{{ route('suppliers.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Suppliers</a>
                 <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Purchases</a>
                 <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Invoices</a>
                 <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Reports</a>
