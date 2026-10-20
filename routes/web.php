@@ -7,7 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SupplierController;
 
-// Show login page directly as the welcome page (Root URL /)
+// Show login page directly as the root/welcome page
 Route::get('/', [AuthController::class, 'showLoginForm']);
 
 // Authentication Routes
@@ -17,26 +17,17 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Routes accessible only by Admin and Sales User
 Route::middleware(['auth', 'role:Admin,Sales'])->group(function () {
-    Route::get('/customers', [CustomerController::class, 'index']);
+    Route::resource('customers', CustomerController::class);
 });
 
 // Routes accessible only by Admin and Inventory User
 Route::middleware(['auth', 'role:Admin,Inventory'])->group(function () {
-    Route::get('/products', [ProductController::class, 'index']);
+    Route::resource('products', ProductController::class);
+    Route::resource('categories', CategoryController::class);
+    Route::resource('suppliers', SupplierController::class);
 });
 
 // Full access for Admin only
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     // Admin specific routes (e.g., User management)
-});
-
-// Temporary Login Route to prevent errors
-Route::get('/login', function () {
-    return "Login Page goes here";
-})->name('login');
-
-// Categories & Suppliers Routes (Accessible by Admin and Inventory User)
-Route::middleware(['auth', 'role:Admin,Inventory'])->group(function () {
-    Route::resource('categories', CategoryController::class);
-    Route::resource('suppliers', SupplierController::class);
 });
