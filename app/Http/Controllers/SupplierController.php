@@ -32,9 +32,9 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|regex:/^[\pL\s]+$/u|max:255',
             'company_name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'phone' => ['required', 'string', 'regex:/^[0-9\+\-\s\(\)]+$/', 'max:20'],
             'email' => 'nullable|email|unique:suppliers,email',
             'address' => 'nullable|string|max:500',
             'status' => 'required|boolean',

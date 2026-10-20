@@ -31,4 +31,9 @@ class Product extends Model
     {
         return $this->hasMany(InvoiceItem::class);
     }
+    // Define relationship with Supplier
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 }

@@ -19,7 +19,15 @@ class AuthController extends Controller
         // Validate input credentials with server-side validation
         $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => [
+                'required',
+                'string',
+                'min:8',              // at least 8 letter
+                'regex:/[a-z]/',      // Lowercase letter
+                'regex:/[A-Z]/',      // Uppercase letter
+                'regex:/[0-9]/',      // Numbers
+                'regex:/[@$!%*#?&]/', // Special characters
+            ],
         ]);
 
         // Attempt to authenticate the user

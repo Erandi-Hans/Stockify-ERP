@@ -41,7 +41,8 @@ class CustomerController extends Controller
             'email' => 'nullable|email|unique:customers,email',
             'phone' => [
                 'required',
-                'regex:/^[0-9]+$/',
+                'string',
+                'regex:/^[0-9\+\-\s\(\)]+$/',
                 'digits:10' // Validates exactly 10 digits
             ],
             'address' => 'nullable|string|max:500',
@@ -75,8 +76,9 @@ class CustomerController extends Controller
             'email' => 'nullable|email|unique:customers,email,' . $customer->id,
             'phone' => [
                 'required',
-                'regex:/^[0-9]+$/',
-                'digits:10'
+                'string',
+                'regex:/^[0-9\+\-\s\(\)]+$/',
+                'digits:10' // Validates exactly 10 digits
             ],
             'address' => 'nullable|string|max:500',
         ]);

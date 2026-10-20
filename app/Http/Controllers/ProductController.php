@@ -38,7 +38,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'sku' => 'required|string|unique:products,sku|max:100',
+            'sku' => 'required|string|alpha_dash|unique:products,sku|max:100',
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'supplier_id' => 'required|exists:suppliers,id',
@@ -46,7 +46,7 @@ class ProductController extends Controller
             'unit_price' => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
             'reorder_level' => 'required|integer|min:0',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:1000',
         ]);
 
         Product::create($validatedData);
