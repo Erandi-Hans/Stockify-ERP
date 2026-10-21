@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class PurchaseController extends Controller
 {
     /**
-     * Display a listing of purchases.
+     * Display a listing of purchases with search and pagination.
      */
     public function index(Request $request)
     {
@@ -43,7 +43,7 @@ class PurchaseController extends Controller
     }
 
     /**
-     * Store a new purchase and update stock.
+     * Store a new purchase and increment product stock quantity.
      */
     public function store(Request $request)
     {
@@ -58,19 +58,22 @@ class PurchaseController extends Controller
 
         $validated['purchase_number'] = 'PO-' . date('Ymd') . '-' . rand(1000, 9999);
         $validated['total_cost'] = $validated['quantity'] * $validated['unit_cost'];
+        $validated['status'] = 'Completed';
 
         DB::transaction(function () use ($validated) {
+            // Create purchase record
             Purchase::create($validated);
 
+            // Increment product stock quantity
             $product = Product::findOrFail($validated['product_id']);
             $product->increment('stock_quantity', $validated['quantity']);
         });
 
-        return redirect()->route('purchases.index')->with('success', 'Purchase saved successfully!');
+        return redirect()->route('purchases.index')->with('success', 'Purchase recorded and stock updated successfully!');
     }
 
     /**
-     * Prevent 404 on show route.
+     * Prevent 404 error by redirecting show requests to index.
      */
     public function show(Purchase $purchase)
     {
@@ -78,7 +81,7 @@ class PurchaseController extends Controller
     }
 
     /**
-     * Show the edit form.
+     * Show the form for editing the specified purchase record.
      */
     public function edit(Purchase $purchase)
     {
@@ -89,7 +92,7 @@ class PurchaseController extends Controller
     }
 
     /**
-     * Update purchase record and update stock.
+     * Update the specified purchase record and adjust stock accurately.
      */
     public function update(Request $request, Purchase $purchase)
     {
@@ -105,23 +108,36 @@ class PurchaseController extends Controller
         $validated['total_cost'] = $validated['quantity'] * $validated['unit_cost'];
 
         DB::transaction(function () use ($validated, $purchase) {
-            // Revert previous stock
-            $oldProduct = Product::findOrFail($purchase->product_id);
-            $oldProduct->decrement('stock_quantity', $purchase->quantity);
+
+            // Adjust stock based on product changes
+            if ($purchase->product_id == $validated['product_id']) {
+                $qtyDifference = $validated['quantity'] - $purchase->quantity;
+                $product = Product::findOrFail($validated['product_id']);
+
+                if ($qtyDifference > 0) {
+                    $product->increment('stock_quantity', $qtyDifference);
+                } elseif ($qtyDifference < 0) {
+                    $product->decrement('stock_quantity', abs($qtyDifference));
+                }
+            } else {
+                // Revert old product stock
+                $oldProduct = Product::findOrFail($purchase->product_id);
+                $oldProduct->decrement('stock_quantity', $purchase->quantity);
+
+                // Add to new product stock
+                $newProduct = Product::findOrFail($validated['product_id']);
+                $newProduct->increment('stock_quantity', $validated['quantity']);
+            }
 
             // Update purchase record
             $purchase->update($validated);
-
-            // Add new stock
-            $newProduct = Product::findOrFail($validated['product_id']);
-            $newProduct->increment('stock_quantity', $validated['quantity']);
         });
 
         return redirect()->route('purchases.index')->with('success', 'Purchase updated successfully!');
     }
 
     /**
-     * Delete purchase record and decrement stock.
+     * Remove the specified purchase record and decrement stock quantity.
      */
     public function destroy(Purchase $purchase)
     {

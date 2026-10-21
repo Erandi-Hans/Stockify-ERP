@@ -15,8 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('purchase_number')->unique();
             $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade'); // Added product relationship
+            $table->integer('quantity'); // Added quantity
+            $table->decimal('unit_cost', 10, 2); // Added unit cost
+            $table->decimal('total_cost', 10, 2); // Added total cost
             $table->date('purchase_date');
-            $table->decimal('total_amount', 10, 2)->default(0.00);
+            $table->text('notes')->nullable(); // Added notes
             $table->string('status')->default('completed'); // e.g., pending, completed, cancelled
             $table->timestamps();
         });
