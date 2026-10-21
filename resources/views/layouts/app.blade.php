@@ -22,7 +22,7 @@
                 <a href="{{ route('products.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Products</a>
                 <a href="{{ route('categories.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Categories</a>
                 <a href="{{ route('suppliers.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Suppliers</a>
-                <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Purchases</a>
+                <a href="{{ route('purchases.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Purchases</a>
                 <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Invoices</a>
                 <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Reports</a>
             </nav>

@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SupplierController;
 
 // Show login page directly as the root/welcome page
@@ -26,6 +27,7 @@ Route::middleware(['auth', 'role:Admin,Inventory'])->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('suppliers', SupplierController::class);
     Route::resource('customers', CustomerController::class);
+    Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store']);
 });
 
 // Full access for Admin only
