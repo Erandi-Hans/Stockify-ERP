@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SupplierController;
 
@@ -28,6 +29,7 @@ Route::middleware(['auth', 'role:Admin,Inventory'])->group(function () {
     Route::resource('suppliers', SupplierController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('purchases', PurchaseController::class);
+    Route::resource('invoices', InvoiceController::class);
 });
 
 // Full access for Admin only
