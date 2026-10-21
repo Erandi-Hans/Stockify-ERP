@@ -27,7 +27,7 @@ Route::middleware(['auth', 'role:Admin,Inventory'])->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('suppliers', SupplierController::class);
     Route::resource('customers', CustomerController::class);
-    Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store']);
+    Route::resource('purchases', PurchaseController::class);
 });
 
 // Full access for Admin only
