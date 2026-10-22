@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SupplierController;
 
 // Show login page directly as the root/welcome page
@@ -30,6 +31,14 @@ Route::middleware(['auth', 'role:Admin,Inventory'])->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::resource('purchases', PurchaseController::class);
     Route::resource('invoices', InvoiceController::class);
+});
+
+Route::middleware(['auth'])->group(function () {
+    // Reports Routes
+    Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
+    Route::get('/reports/stock', [ReportController::class, 'stock'])->name('reports.stock');
+    Route::get('/reports/purchase', [ReportController::class, 'purchase'])->name('reports.purchase');
+    Route::get('/reports/outstanding', [ReportController::class, 'customerOutstanding'])->name('reports.outstanding');
 });
 
 // Full access for Admin only

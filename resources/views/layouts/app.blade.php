@@ -24,7 +24,13 @@
                 <a href="{{ route('suppliers.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Suppliers</a>
                 <a href="{{ route('purchases.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Purchases</a>
                 <a href="{{ route('invoices.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Invoices</a>
-                <a href="#" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Reports</a>
+                <div class="space-y-1">
+                    <span class="block px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Reports</span>
+                    <a href="{{ route('reports.sales') }}" class="block px-6 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">Sales Report</a>
+                    <a href="{{ route('reports.stock') }}" class="block px-6 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">Stock Report</a>
+                    <a href="{{ route('reports.purchase') }}" class="block px-6 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">Purchase Report</a>
+                    <a href="{{ route('reports.outstanding') }}" class="block px-6 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">Customer Outstanding</a>
+                </div>
             </nav>
         </div>
 
