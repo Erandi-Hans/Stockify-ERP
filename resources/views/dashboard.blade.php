@@ -3,26 +3,39 @@
 @section('content')
 <div class="space-y-8">
 
-    <!-- Top Header & Quick Action -->
+    <!-- Top Header, Quick Actions & Logout Form -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Dashboard Overview</h1>
             <p class="text-sm text-gray-500 mt-1">Real-time statistics & recent transactions summary.</p>
         </div>
         <div class="flex items-center gap-3">
+            <!-- Create Invoice Action Button -->
             <a href="{{ route('invoices.create') }}" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-sm transition-all duration-200">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
                 Create Invoice
             </a>
+
+            <!-- Secure POST Logout Button Form -->
+            <form method="POST" action="{{ route('logout') }}" class="inline">
+                @csrf
+                <button type="submit" class="inline-flex items-center justify-center bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-sm px-4 py-2.5 rounded-xl border border-rose-200 shadow-sm transition-all duration-200">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Logout
+                </button>
+            </form>
         </div>
     </div>
 
     <!-- Enhanced Stat Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
-        <!-- Total Customers -->
+        <!-- Total Customers (Visible to Admin and Sales User) -->
+        @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 flex items-center justify-between">
             <div>
                 <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Customers</p>
@@ -35,8 +48,10 @@
                 </svg>
             </div>
         </div>
+        @endif
 
-        <!-- Total Products -->
+        <!-- Total Products (Visible to Admin and Inventory User) -->
+        @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 3)
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 flex items-center justify-between">
             <div>
                 <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Products</p>
@@ -49,8 +64,10 @@
                 </svg>
             </div>
         </div>
+        @endif
 
-        <!-- Total Suppliers -->
+        <!-- Total Suppliers (Visible to Admin and Inventory User) -->
+        @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 3)
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 flex items-center justify-between">
             <div>
                 <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Suppliers</p>
@@ -63,8 +80,10 @@
                 </svg>
             </div>
         </div>
+        @endif
 
-        <!-- Low Stock Alert -->
+        <!-- Low Stock Alert (Visible to Admin and Inventory User) -->
+        @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 3)
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-rose-100 hover:shadow-md transition-all duration-200 flex items-center justify-between">
             <div>
                 <p class="text-xs font-semibold text-rose-500 uppercase tracking-wider">Low Stock Alert</p>
@@ -77,8 +96,10 @@
                 </svg>
             </div>
         </div>
+        @endif
 
-        <!-- Today's Sales -->
+        <!-- Today's Sales (Visible to Admin and Sales User) -->
+        @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 flex items-center justify-between">
             <div>
                 <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Today's Sales</p>
@@ -91,8 +112,10 @@
                 </svg>
             </div>
         </div>
+        @endif
 
-        <!-- Total Sales -->
+        <!-- Total Sales (Visible to Admin and Sales User) -->
+        @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 flex items-center justify-between">
             <div>
                 <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Sales</p>
@@ -105,8 +128,10 @@
                 </svg>
             </div>
         </div>
+        @endif
 
-        <!-- Outstanding Payments -->
+        <!-- Outstanding Payments (Visible to Admin and Sales User) -->
+        @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 flex items-center justify-between sm:col-span-2 lg:col-span-2">
             <div>
                 <p class="text-xs font-semibold text-amber-500 uppercase tracking-wider">Outstanding Payments</p>
@@ -119,6 +144,7 @@
                 </svg>
             </div>
         </div>
+        @endif
 
     </div>
 

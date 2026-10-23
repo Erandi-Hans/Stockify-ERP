@@ -34,10 +34,12 @@ class InvoiceController extends Controller
 
     /**
      * Show the form for creating a new sales invoice.
+     * Passes active products with stock > 0 for invoice creation.
      */
     public function create()
     {
         $customers = Customer::all();
+        // Retrieve products with available stock
         $products = Product::where('stock_quantity', '>', 0)->get();
 
         return view('invoices.create', compact('customers', 'products'));
@@ -45,83 +47,92 @@ class InvoiceController extends Controller
 
     /**
      * Store a newly created invoice, validate stock, and update inventory atomically.
+     * Uses Laravel Database Transactions to ensure data integrity (Requirement 9).
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'invoice_date' => 'required|date',
-            'products' => 'required|array|min:1',
+            'customer_id'           => 'required|exists:customers,id',
+            'invoice_date'          => 'required|date',
+            'products'              => 'required|array|min:1',
             'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.quantity'   => 'required|integer|min:1',
             'products.*.unit_price' => 'required|numeric|min:0',
-            'discount' => 'nullable|numeric|min:0',
-            'tax' => 'nullable|numeric|min:0',
-            'paid_amount' => 'required|numeric|min:0',
+            'discount'              => 'nullable|numeric|min:0',
+            'tax'                   => 'nullable|numeric|min:0',
+            'paid_amount'           => 'required|numeric|min:0',
         ]);
 
-        // Wrap database operations in a transaction for data integrity
-        DB::transaction(function () use ($validated, $request) {
-            $subtotal = 0;
+        try {
+            // Wrap database operations in a transaction for data integrity
+            DB::transaction(function () use ($validated, $request) {
+                $subtotal = 0;
 
-            // Calculate subtotal for all items and validate stock availability
-            foreach ($validated['products'] as $item) {
-                $product = Product::lockForUpdate()->findOrFail($item['product_id']);
+                // Calculate subtotal for all items and validate stock availability
+                foreach ($validated['products'] as $item) {
+                    $product = Product::lockForUpdate()->findOrFail($item['product_id']);
 
-                // Strict Stock Validation: Ensure stock never becomes negative
-                if ($product->stock_quantity < $item['quantity']) {
-                    throw new \Exception("Insufficient stock for product: {$product->name}. Available: {$product->stock_quantity}");
+                    // Strict Stock Validation: Ensure stock never becomes negative
+                    if ($product->stock_quantity < $item['quantity']) {
+                        throw new \Exception("Insufficient stock for product: {$product->name}. Available stock: {$product->stock_quantity}");
+                    }
+
+                    $subtotal += $item['quantity'] * $item['unit_price'];
                 }
 
-                $subtotal += $item['quantity'] * $item['unit_price'];
-            }
+                $discount = $request->input('discount', 0);
+                $tax = $request->input('tax', 0);
 
-            $discount = $request->input('discount', 0);
-            $tax = $request->input('tax', 0);
-            $grandTotal = ($subtotal - $discount) + $tax;
-            $paidAmount = $request->input('paid_amount', 0);
-            $dueAmount = $grandTotal - $paidAmount;
+                // Grand Total Calculation: Subtotal - Discount + Tax
+                $grandTotal = max(0, ($subtotal - $discount) + $tax);
+                $paidAmount = $request->input('paid_amount', 0);
 
-            // Determine payment status
-            $status = 'Unpaid';
-            if ($paidAmount >= $grandTotal) {
-                $status = 'Paid';
-                $dueAmount = 0;
-            } elseif ($paidAmount > 0) {
-                $status = 'Partially Paid';
-            }
+                // Calculate Outstanding / Due Amount
+                $dueAmount = max(0, $grandTotal - $paidAmount);
 
-            // Create the main invoice record
-            $invoice = Invoice::create([
-                'invoice_number' => 'INV-' . date('Ymd') . '-' . rand(1000, 9999),
-                'customer_id' => $validated['customer_id'],
-                'user_id' => Auth::id(),
-                'invoice_date' => $validated['invoice_date'],
-                'total_amount' => $grandTotal,
-                'paid_amount' => $paidAmount,
-                'due_amount' => $dueAmount,
-                'status' => $status,
-            ]);
+                // Determine Payment Status (Paid, Partially Paid, Unpaid)
+                $status = 'Unpaid';
+                if ($paidAmount >= $grandTotal) {
+                    $status = 'Paid';
+                    $dueAmount = 0;
+                } elseif ($paidAmount > 0) {
+                    $status = 'Partially Paid';
+                }
 
-            // Save invoice items and decrement product stock
-            foreach ($validated['products'] as $item) {
-                $itemSubtotal = $item['quantity'] * $item['unit_price'];
-
-                InvoiceItem::create([
-                    'invoice_id' => $invoice->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unit_price'],
-                    'subtotal' => $itemSubtotal,
+                // Create the main invoice record
+                $invoice = Invoice::create([
+                    'invoice_number' => 'INV-' . date('Ymd') . '-' . rand(1000, 9999),
+                    'customer_id'    => $validated['customer_id'],
+                    'user_id'        => Auth::id(),
+                    'invoice_date'   => $validated['invoice_date'],
+                    'total_amount'   => $grandTotal,
+                    'paid_amount'    => $paidAmount,
+                    'due_amount'     => $dueAmount,
+                    'status'         => $status,
                 ]);
 
-                // Decrement stock quantity
-                $product = Product::findOrFail($item['product_id']);
-                $product->decrement('stock_quantity', $item['quantity']);
-            }
-        });
+                // Save invoice items and decrement product stock
+                foreach ($validated['products'] as $item) {
+                    $itemSubtotal = $item['quantity'] * $item['unit_price'];
 
-        return redirect()->route('invoices.index')->with('success', 'Sales invoice created successfully and stock updated!');
+                    InvoiceItem::create([
+                        'invoice_id' => $invoice->id,
+                        'product_id' => $item['product_id'],
+                        'quantity'   => $item['quantity'],
+                        'unit_price' => $item['unit_price'],
+                        'subtotal'   => $itemSubtotal,
+                    ]);
+
+                    // Deduct sold quantity from stock (New Stock = Existing Stock - Sold Quantity)
+                    $product = Product::findOrFail($item['product_id']);
+                    $product->decrement('stock_quantity', $item['quantity']);
+                }
+            });
+
+            return redirect()->route('invoices.index')->with('success', 'Sales invoice created successfully and stock updated!');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage())->withInput();
+        }
     }
 
     /**
@@ -145,7 +156,7 @@ class InvoiceController extends Controller
                 $product->increment('stock_quantity', $item->quantity);
             }
 
-            // Delete invoice items and invoice
+            // Delete invoice items and main invoice
             $invoice->invoiceItems()->delete();
             $invoice->delete();
         });

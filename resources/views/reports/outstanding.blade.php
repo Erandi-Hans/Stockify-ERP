@@ -37,12 +37,18 @@
             <tbody class="divide-y divide-gray-100 text-sm">
                 @forelse($customers as $customer)
                 @php
-                $totalSales = $customer->invoices->sum('grand_total');
+                // Calculate totals safely using Eloquent relationship
+                $totalSales = $customer->invoices->sum('total_amount');
                 $totalPaid = $customer->invoices->sum('paid_amount');
-                $outstanding = $totalSales - $totalPaid;
+                $outstanding = max(0, $totalSales - $totalPaid);
                 @endphp
-                <tr>
-                    <td class="px-6 py-4 font-semibold text-gray-900">{{ $customer->name }}</td>
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-semibold text-gray-900">
+                        {{ $customer->name }}
+                        @if(!empty($customer->phone))
+                        <span class="block text-xs font-normal text-gray-500">{{ $customer->phone }}</span>
+                        @endif
+                    </td>
                     <td class="px-6 py-4 text-right font-medium text-gray-700">{{ number_format($totalSales, 2) }}</td>
                     <td class="px-6 py-4 text-right text-emerald-600 font-medium">{{ number_format($totalPaid, 2) }}</td>
                     <td class="px-6 py-4 text-right font-bold {{ $outstanding > 0 ? 'text-rose-600' : 'text-gray-900' }}">

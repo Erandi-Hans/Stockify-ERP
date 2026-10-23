@@ -22,11 +22,6 @@ class AuthController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:8',              // at least 8 letter
-                'regex:/[a-z]/',      // Lowercase letter
-                'regex:/[A-Z]/',      // Uppercase letter
-                'regex:/[0-9]/',      // Numbers
-                'regex:/[@$!%*#?&]/', // Special characters
             ],
         ]);
 
@@ -34,8 +29,8 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
 
-            // Redirect to dashboard or intended page on success
-            return redirect()->intended('/customers')->with('success', 'Logged in successfully.');
+            // Redirect to dashboard on successful login
+            return redirect()->intended('/dashboard')->with('success', 'Logged in successfully.');
         }
 
         // Authentication failed - return back with error message

@@ -55,10 +55,10 @@
                 </div>
             </div>
 
-            <!-- Navigation Links with Active State Highlighting -->
+            <!-- Navigation Links with Role-Based Access Control -->
             <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
 
-                <!-- Dashboard -->
+                <!-- Dashboard (Visible to all authenticated users) -->
                 <a href="{{ route('dashboard') }}"
                     class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white text-slate-300' }}">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,6 +67,8 @@
                     Dashboard
                 </a>
 
+                {{-- Sales & Customer Module Links (Visible to Admin [1] and Sales User [2]) --}}
+                @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
                 <!-- Customers -->
                 <a href="{{ route('customers.index') }}"
                     class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('customers.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white text-slate-300' }}">
@@ -76,6 +78,18 @@
                     Customers
                 </a>
 
+                <!-- Invoices -->
+                <a href="{{ route('invoices.index') }}"
+                    class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('invoices.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white text-slate-300' }}">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('invoices.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Invoices
+                </a>
+                @endif
+
+                {{-- Inventory & Stock Module Links (Visible to Admin [1] and Inventory User [3]) --}}
+                @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 3)
                 <!-- Products -->
                 <a href="{{ route('products.index') }}"
                     class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('products.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white text-slate-300' }}">
@@ -111,21 +125,15 @@
                     </svg>
                     Purchases
                 </a>
-
-                <!-- Invoices -->
-                <a href="{{ route('invoices.index') }}"
-                    class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('invoices.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-slate-800 hover:text-white text-slate-300' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('invoices.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Invoices
-                </a>
+                @endif
 
                 <!-- Reports Section Divider -->
                 <div class="pt-4 pb-2">
                     <span class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Reports Section</span>
                 </div>
 
+                {{-- Sales Reports (Visible to Admin [1] and Sales User [2]) --}}
+                @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
                 <!-- Sales Report -->
                 <a href="{{ route('reports.sales') }}"
                     class="flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('reports.sales') ? 'bg-slate-800 text-indigo-400 font-semibold' : 'hover:bg-slate-800/60 hover:text-white text-slate-400' }}">
@@ -133,6 +141,16 @@
                     Sales Report
                 </a>
 
+                <!-- Customer Outstanding -->
+                <a href="{{ route('reports.outstanding') }}"
+                    class="flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('reports.outstanding') ? 'bg-slate-800 text-indigo-400 font-semibold' : 'hover:bg-slate-800/60 hover:text-white text-slate-400' }}">
+                    <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('reports.outstanding') ? 'bg-indigo-400' : 'bg-slate-600' }} mr-3"></span>
+                    Customer Outstanding
+                </a>
+                @endif
+
+                {{-- Stock/Inventory Reports (Visible to Admin [1] and Inventory User [3]) --}}
+                @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 3)
                 <!-- Stock Report -->
                 <a href="{{ route('reports.stock') }}"
                     class="flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('reports.stock') ? 'bg-slate-800 text-indigo-400 font-semibold' : 'hover:bg-slate-800/60 hover:text-white text-slate-400' }}">
@@ -146,13 +164,7 @@
                     <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('reports.purchase') ? 'bg-indigo-400' : 'bg-slate-600' }} mr-3"></span>
                     Purchase Report
                 </a>
-
-                <!-- Customer Outstanding -->
-                <a href="{{ route('reports.outstanding') }}"
-                    class="flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('reports.outstanding') ? 'bg-slate-800 text-indigo-400 font-semibold' : 'hover:bg-slate-800/60 hover:text-white text-slate-400' }}">
-                    <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('reports.outstanding') ? 'bg-indigo-400' : 'bg-slate-600' }} mr-3"></span>
-                    Customer Outstanding
-                </a>
+                @endif
 
             </nav>
 

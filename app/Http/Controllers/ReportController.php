@@ -80,25 +80,8 @@ class ReportController extends Controller
      */
     public function customerOutstanding()
     {
-        $customers = Customer::with('invoices')
-            ->get()
-            ->map(function ($customer) {
-                $totalSales = $customer->invoices->sum('total_amount');
-                $totalPaid = $customer->invoices->sum('paid_amount');
-                $outstanding = $totalSales - $totalPaid;
-
-                return [
-                    'id' => $customer->id,
-                    'name' => $customer->name,
-                    'phone' => $customer->phone,
-                    'total_sales' => $totalSales,
-                    'total_paid' => $totalPaid,
-                    'outstanding' => $outstanding,
-                ];
-            })
-            ->filter(function ($item) {
-                return $item['outstanding'] > 0;
-            });
+        // Fetch customers with their invoices using Eloquent relationship
+        $customers = Customer::with('invoices')->get();
 
         return view('reports.outstanding', compact('customers'));
     }
