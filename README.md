@@ -1,59 +1,201 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Stockify ERP - Advanced Sales & Inventory Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A robust, enterprise-grade Sales and Inventory Management Web Application built with **Laravel** and **MySQL**. The system strictly adheres to role-based access control, atomic database operations via transactions, real-time stock validations, and automated customer payment tracking.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Key Features & Business Logic
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Authentication & Role-Based Authorization (RBAC)
+- **Secure Authentication:** Password hashing using bcrypt with session management.
+- **Role Permissions:**
+  - **Admin:** Full system access (Dashboard, User Management, Master Data, Sales, Purchases, Reports).
+  - **Sales User (Manager):** Access to Customers, Invoices, Payments, and Sales Reports.
+  - **Inventory User (Cashier):** Access to Products, Categories, Suppliers, Purchases, and Stock Reports.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Real-Time Dashboard
+- Displays dynamic KPI metrics: Total Customers, Products, Suppliers, Today's Sales, Total Sales, and Total Outstanding Payments.
+- Visual alerts for **Low Stock Products** based on defined reorder levels.
+- Recent sales invoice overview.
 
-## Learning Laravel
+### 3. Master Data Management (CRUD)
+- **Category Management:** Categorize products with status indicators.
+- **Supplier Management:** Track supplier contact details and company information.
+- **Product Management:** Complete details including SKU/Product Code, Cost Price, Selling Price, Quantity, and Reorder Levels.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 4. Stock & Purchase Management
+- **Automatic Stock Increment:** Completing a purchase transaction automatically updates inventory ($\text{New Stock} = \text{Existing Stock} + \text{Purchased Quantity}$).
+- **Stock Validation:** Prevents negative stock balances during sales transactions.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 5. Sales Invoice & Payment Calculations
+- **Dynamic Product Pricing & Calculations:** Automatic unit price autofill and real-time total, discount, tax, subtotal, and grand total calculations.
+- **Stock Decrement:** Deducts sold items upon invoice generation ($\text{New Stock} = \text{Existing Stock} - \text{Sold Quantity}$).
+- **Payment Handling:** Supports Full, Partial, and Unpaid invoice statuses.
+- **Automated Outstanding Balance:** Dynamic balance calculations ($\text{Outstanding} = \text{Grand Total} - \text{Paid Amount}$).
 
-## Laravel Sponsors
+### 6. Atomic Database Transactions
+- Wrap critical purchasing and sales invoicing logic in `DB::transaction()` to ensure atomicity and data consistency in case of runtime errors.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 7. Analytical Reports & Invoice Printing
+- **Sales Report:** Filter by date range and specific customers.
+- **Stock Status Report:** Displays stock status and reorder warnings.
+- **Purchase Report:** Supplier purchase history with date filtering.
+- **Customer Outstanding Report:** Clear breakdown of total sales, payments, and outstanding balances.
+- **Printable Invoices & Reports:** Print-ready formatting for official records.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🛠️ Tech Stack & Requirements
 
-## Contributing
+- **PHP:** >= 8.2
+- **Framework:** Laravel 11.x / 10.x
+- **Database:** MySQL / MariaDB
+- **Frontend Stack:** Tailwind CSS, Blade Engine, JavaScript (ES6)
+- **Package Manager:** Composer & NPM
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
+## 💻 Installation & Local Setup Guide
 
-## Code of Conduct
+Follow these step-by-step instructions to install and run the application locally:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 📋 System Requirements
+Ensure your local development environment meets the following:
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- MySQL / MariaDB
 
-## Security Vulnerabilities
+## ⚙️ Installation & Setup
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Follow these steps to set up the project locally on your machine:
 
-## License
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/Erandi-Hans/Stockify-ERP.git](https://github.com/Erandi-Hans/Stockify-ERP.git)
+     cd Stockify-ERP
+2. **Install PHP dependencies:**
+    ```bash
+   composer install
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. **Configure Environment File:**
+    ```bash
+   cp .env.example .env
+    php artisan key:generate
+
+4. **Configure Database:**
+   Open your .env file and update your database credentials:
+    ```bash
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=stockify_db
+   DB_USERNAME=root
+   DB_PASSWORD=
+
+5. **Run Migrations & Seeders:**
+    ```bash
+   php artisan migrate:fresh --seed
+
+6. **Start the Local Development Server::**
+    ```bash
+   php artisan serve
+  Open your browser and navigate to: http://127.0.0.1:8000
+
+---
+
+## 📁 Project Structure
+
+    ```text
+    Stockify-ERP/
+    ├── app/
+    │   ├── Http/
+    │   │   ├── Controllers/
+    │   │   │   ├── AuthController.php
+    │   │   │   ├── CategoryController.php
+    │   │   │   ├── CustomerController.php
+    │   │   │   ├── DashboardController.php
+    │   │   │   ├── InvoiceController.php
+    │   │   │   ├── ProductController.php
+    │   │   │   ├── PurchaseController.php
+    │   │   │   ├── ReportController.php
+    │   │   │   └── SupplierController.php
+    │   │   └── Middleware/
+    │   │       └── CheckRole.php
+    │   └── Models/
+    │       ├── Category.php
+    │       ├── Customer.php
+    │       ├── Invoice.php
+    │       ├── InvoiceItem.php
+    │       ├── Payment.php
+    │       ├── Product.php
+    │       ├── Purchase.php
+    │       ├── PurchaseItem.php
+    │       ├── Role.php
+    │       ├── Supplier.php
+    │       └── User.php
+    ├── database/
+    │   ├── migrations/
+    │   └── seeders/
+    │       ├── AdminUserSeeder.php
+    │       ├── CustomerSeeder.php
+    │       ├── DatabaseSeeder.php
+    │       ├── ProductSeeder.php
+    │       ├── RoleSeeder.php
+    │       └── SupplierSeeder.php
+    ├── resources/
+    │   └── views/
+    │       ├── auth/
+    │       │   └── login.blade.php
+    │       ├── categories/
+    │       ├── customers/
+    │       ├── invoices/
+    │       ├── layouts/
+    │       │   └── app.blade.php
+    │       ├── products/
+    │       ├── purchases/
+    │       ├── reports/
+    │       │   ├── outstanding.blade.php
+    │       │   ├── purchase.blade.php
+    │       │   ├── sales.blade.php
+    │       │   └── stock.blade.php
+    │       ├── suppliers/
+    │       ├── dashboard.blade.php
+    │       └── welcome.blade.php
+    ├── routes/
+    │   ├── console.php
+    │   └── web.php
+    ├── .env.example
+    ├── composer.json
+    ├── package.json
+    └── README.md
+    
+## 🔑 Demo Login Credentials
+
+The application comes pre-seeded with sample user accounts for testing each authorization role:
+
+| Role | Name | Email | Password | Allowed Modules |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin** | Admin User | `admin@stockify.com` | `Password@123` | Full System Access |
+| **Sales User** | Sales Manager | `sales@stockify.com` | `Password@123` | Customers, Invoices, Payments, Sales Reports |
+| **Inventory User** | Cashier User | `inventory@stockify.com` | `Password@123` | Products, Categories, Suppliers, Purchases, Stock Reports |
+
+---
+
+## 📷 Application Screenshots
+
+*(Upload your screenshots to your repository under a `public/screenshots/` folder or drag & drop them into GitHub issue/PR to get image links, then replace the image paths below)*
+
+| Dashboard Overview | Sales Invoice Creation |
+| :---: | :---: |
+| ![Dashboard](public/screenshots/dashboard.png) | ![Create Invoice](public/screenshots/create-invoice.png) |
+
+| Product Management | Customer Outstanding Report |
+| :---: | :---: |
+| ![Products](public/screenshots/products.png) | ![Outstanding Report](public/screenshots/outstanding-report.png) |
+
+---
+---
+## 🛡️ License
+This project is developed for enterprise assessment purposes.
+
+---
