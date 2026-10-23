@@ -47,15 +47,19 @@ class CategoryController extends Controller
         return view('categories.edit', compact('category'));
     }
 
-    // Update the specified category in database
     public function update(Request $request, Category $category)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            'description' => 'nullable|string|max:500',
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'status' => 'required|in:Active,Inactive',
         ]);
-        $category->update($request->all());
+
+        $category->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status,
+        ]);
 
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
