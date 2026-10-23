@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReportController;
@@ -45,3 +46,6 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     // Admin specific routes (e.g., User management)
 });
+
+// Dashboard Route
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

@@ -12,14 +12,22 @@ class Product extends Model
         'sku',
         'name',
         'category_id',
+        'supplier_id',
         'description',
+        'cost_price',
         'unit_price',
         'stock_quantity',
+        'reorder_level',
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     public function purchaseItems(): HasMany
@@ -30,10 +38,5 @@ class Product extends Model
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
-    }
-    // Define relationship with Supplier
-    public function supplier()
-    {
-        return $this->belongsTo(Supplier::class);
     }
 }

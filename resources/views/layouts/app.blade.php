@@ -17,7 +17,7 @@
                 Stockify ERP
             </div>
             <nav class="flex-1 p-4 space-y-2">
-                <a href="#" class="block px-4 py-2.5 rounded bg-gray-800 text-white font-medium">Dashboard</a>
+                <a href="{{ route('dashboard') }}" class="block px-4 py-2.5 rounded bg-gray-800 text-white font-medium">Dashboard</a>
                 <a href="{{ route('customers.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Customers</a>
                 <a href="{{ route('products.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Products</a>
                 <a href="{{ route('categories.index') }}" class="block px-4 py-2.5 rounded hover:bg-gray-800 text-gray-300">Categories</a>

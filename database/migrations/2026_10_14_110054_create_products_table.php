@@ -16,9 +16,12 @@ return new class extends Migration
             $table->string('sku')->unique();
             $table->string('name');
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+            $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
             $table->text('description')->nullable();
-            $table->decimal('unit_price', 10, 2);
-            $table->integer('stock_quantity')->default(0); // Avoiding negative stock logically via App/DB
+            $table->decimal('cost_price', 10, 2)->default(0.00);
+            $table->decimal('unit_price', 10, 2); // Selling price
+            $table->integer('stock_quantity')->default(0);
+            $table->integer('reorder_level')->default(10); // Reorder level added
             $table->timestamps();
         });
     }
