@@ -1,62 +1,55 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
-    <div class="flex justify-between items-center mb-6 print:hidden">
-        <h2 class="text-2xl font-bold text-gray-800">Purchase History Report</h2>
-        <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
-            Print Report
+<div class="space-y-6">
+
+    <!-- Header & Action Button -->
+    <div class="flex items-center justify-between no-print">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Purchase Report</h1>
+            <p class="text-sm text-gray-500">Track purchase orders, suppliers, and total expenditure.</p>
+        </div>
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-sm inline-flex items-center transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+            </svg>
+            Print Purchase Report
         </button>
     </div>
 
-    <!-- Filter Form -->
-    <div class="bg-white p-4 rounded-lg shadow mb-6 border print:hidden">
-        <form method="GET" action="{{ route('reports.purchase') }}" class="grid grid-cols-3 gap-4">
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Start Date</label>
-                <input type="date" name="start_date" value="{{ $startDate }}" class="w-full border rounded px-3 py-2 text-sm">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">End Date</label>
-                <input type="date" name="end_date" value="{{ $endDate }}" class="w-full border rounded px-3 py-2 text-sm">
-            </div>
-            <div class="flex items-end gap-2">
-                <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded text-sm hover:bg-gray-900">Filter</button>
-                <a href="{{ route('reports.purchase') }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded text-sm">Reset</a>
-            </div>
-        </form>
+    <!-- Printable Header Banner -->
+    <div class="hidden print:block text-center border-b pb-4 mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Stockify ERP - Purchase Report</h1>
+        <p class="text-sm text-gray-600">Generated on: {{ now()->format('Y-m-d H:i A') }}</p>
     </div>
 
-    <!-- Purchase Report Table -->
-    <div class="bg-white shadow rounded-lg overflow-hidden border">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Date</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Purchase No</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Supplier</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Total Amount</th>
+    <!-- Purchase Data Table (Requirement #12) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase">
+                    <th class="px-6 py-3">Purchase No</th>
+                    <th class="px-6 py-3">Supplier</th>
+                    <th class="px-6 py-3">Date</th>
+                    <th class="px-6 py-3 text-right">Total Amount (Rs.)</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody class="divide-y divide-gray-100 text-sm">
                 @forelse($purchases as $purchase)
                 <tr>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $purchase->purchase_date }}</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-800">{{ $purchase->purchase_number ?? 'PO-'.$purchase->id }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-800">{{ $purchase->supplier->name ?? 'N/A' }}</td>
-                    <td class="px-6 py-4 text-sm text-right font-bold text-gray-900">Rs. {{ number_format($purchase->total_amount, 2) }}</td>
+                    <td class="px-6 py-4 font-bold text-indigo-600">PO-{{ sprintf("%05d", $purchase->id) }}</td>
+                    <td class="px-6 py-4 font-medium text-gray-900">{{ $purchase->supplier->company_name ?? $purchase->supplier->name ?? 'N/A' }}</td>
+                    <td class="px-6 py-4 text-gray-600">{{ $purchase->created_at->format('Y-m-d') }}</td>
+                    <td class="px-6 py-4 text-right font-semibold text-gray-900">{{ number_format($purchase->total_amount, 2) }}</td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">No purchase records found.</td>
+                    <td colspan="4" class="px-6 py-8 text-center text-gray-400">No purchase records found.</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    <div class="mt-4 print:hidden">
-        {{ $purchases->links() }}
-    </div>
 </div>
 @endsection

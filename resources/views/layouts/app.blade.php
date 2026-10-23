@@ -13,6 +13,25 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        @media print {
+
+            aside,
+            header,
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background-color: white !important;
+            }
+
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 
