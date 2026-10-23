@@ -53,10 +53,9 @@ class CategoryController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string|max:500',
-            'status' => 'required|boolean',
+            'status' => 'required|in:Active,Inactive',
         ]);
-
-        $category->update($validatedData);
+        $category->update($request->all());
 
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
